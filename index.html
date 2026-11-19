@@ -1,6 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<!-- Google Analytics 4: direct measurement -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DZM9X0XJEW"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-DZM9X0XJEW');
+</script>
+<!-- Google Tag Manager: configure additional tags in GTM if needed.
+     Do not install a second GA4 page-view tag in GTM; GA4 is already configured above. -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-KRLR6RK3');</script>
+
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Shopwork – Furniture built to your measurements</title>
@@ -113,6 +125,9 @@ main>section{animation:vin .5s ease both}@keyframes vin{from{opacity:0;transform
 </style>
 </head>
 <body>
+<!-- Google Tag Manager (noscript fallback) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KRLR6RK3" height="0" width="0" style="display:none;visibility:hidden" title="Google Tag Manager"></iframe></noscript>
+
 <header><div class="wrap"><a class="logo" href="#home" style="color:inherit;text-decoration:none">Shopwork</a>
 <nav><a href="#home">Home</a><a href="#ready">Pre-designed</a><a href="#custom">Build your own</a><a href="#how">How it works</a><a href="#about">About me</a></nav></div></header>
 
@@ -592,5 +607,38 @@ function route(){const v=location.hash.slice(1),i=V.indexOf(v);H.hidden=i>=0;S.f
 document.querySelectorAll("nav a").forEach(a=>a.toggleAttribute("aria-current",a.getAttribute("href")==="#"+(i>=0?v:"home")));
 if(v==="ready")pdOpen(true);if(v==="custom")update();window.scrollTo(0,0)}
 window.addEventListener("hashchange",route);route()})();</script>
+
+<!-- Shopwork interaction analytics: event tracking for existing controls -->
+<script>
+(function(){
+  function track(event, params){
+    if(typeof window.gtag === 'function') window.gtag('event', event, params || {});
+  }
+  document.addEventListener('click', function(e){
+    var button=e.target.closest('button, a');
+    if(!button)return;
+    if(button.matches('#pd-grid button[data-p]')){
+      track('furniture_view',{furniture:button.dataset.p});
+    }else if(button.matches('#sw button[data-i]')){
+      track('stain_selected',{furniture:'Slatted Outdoor Chair',stain:button.title || button.getAttribute('aria-label') || ''});
+    }else if(button.matches('#psw button[data-i]')){
+      track('color_selected',{furniture:'Plant Shelf',palette:button.title || button.getAttribute('aria-label') || ''});
+    }else if(button.matches('#tabs button[data-t]')){
+      track('configurator_used',{piece_type:button.textContent.trim()});
+    }else if(button.matches('#ask, #sask')){
+      track('inquiry_clicked',{furniture:button.id==='sask'?'Plant Shelf':'Slatted Outdoor Chair'});
+    }else if(button.matches('#send')){
+      track('custom_request_clicked',{piece_type:(document.querySelector('#tabs button[aria-pressed="true"]')||{}).textContent?.trim()||''});
+    }
+  });
+  var firstCustomizerInteraction=false;
+  document.addEventListener('input',function(e){
+    if(!firstCustomizerInteraction && e.target.closest('#controls')){
+      firstCustomizerInteraction=true;
+      track('configurator_used',{action:'adjusted_setting'});
+    }
+  });
+})();
+</script>
 </body>
 </html>
